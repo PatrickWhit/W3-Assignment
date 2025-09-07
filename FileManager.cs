@@ -52,12 +52,7 @@ namespace W1_assignment_template
                     character.charClass = cols[1];
                     character.lvl = cols[2];
                     character.hp = cols[3];
-
-                    var equip = cols[4].Split("|");
-                    foreach (var eq in equip)
-                    {
-                        character.equipment.Add(eq);
-                    }
+                    character.equipment = cols[4];
 
                     Characters.Add(character);
 
@@ -66,7 +61,7 @@ namespace W1_assignment_template
             }
         }
 
-        public void ReadCharactersFromList()
+        public void ReadCharactersFromList() // read all character from the list
         {
             foreach (var c in Characters)
             {
@@ -76,7 +71,7 @@ namespace W1_assignment_template
                 Console.WriteLine($"Character Health: {c.hp}");
                 Console.WriteLine("Equipment:");
 
-                foreach (var e in c.equipment)
+                foreach (var e in c.equipment.Split('|'))
                 {
                     Console.WriteLine($"\t{e}");
                 }
@@ -87,45 +82,39 @@ namespace W1_assignment_template
 
         public void WriteNewCharacter() // writes a new character to the list
         {
-            var newChar = new Character();
+            var newChar = new Character(); // initilization of new character
 
-            Console.Write("\nEnter your character's name: ");
+            Console.Write("\nEnter your character's name: "); // give character a name
             newChar.name = Console.ReadLine();
 
-            Console.Write("Enter your character's class: ");
+            Console.Write("Enter your character's class: "); // give character a class
             newChar.charClass = Console.ReadLine();
 
-            Console.Write("Enter your character's level: ");
+            Console.Write("Enter your character's level: "); // give character a level
             newChar.lvl = Console.ReadLine();
 
-            Console.Write("Enter your character's health points: ");
+            Console.Write("Enter your character's health points: "); // give character health amount
             newChar.hp = Console.ReadLine();
 
-            Console.Write("Enter your character's equipment (separate items with a '|'): ");
-            string temp = Console.ReadLine();
+            Console.Write("Enter your character's equipment (separate items with a '|'): "); // give character a equipment
+            newChar.equipment = Console.ReadLine();
 
-            foreach (string t in temp.Split('|')) // adds string variables to equipment list
-            {
-                newChar.equipment.Add(t);
-            }
-
-            Characters.Add(newChar);
+            Characters.Add(newChar); // add the new character to the character list
         }
 
-        public void SaveToFile(List<Character> updateCharacters) // Saves all the charcaters in the list to input.csv
+        public void SaveChangesToFile() // Saves all the charcaters in the list to input.csv
         {
-            //foreach (var character in updateCharacters)
-            //{
-            //    var equipString = string.Join("|", character.equipment); // turns the equipment List into a single string
+            File.WriteAllText(_fileName, string.Empty); // delete all data in the file so it can be rewriten
 
-            //    var CharString = $"{character.name},{character.charClass}," +
-            //                        $"{character.lvl},{character.hp},{equipString}"; // take the character and converts to a string
+            using (StreamWriter writer = new StreamWriter(_fileName, true)) // writes the header to input.csv
+            {
+                writer.WriteLine("Name,Class,Level,HP,Equipment"); // write the header in first
 
-            //    using (StreamWriter writer = new StreamWriter(_fileName, true)) // writes the string to inout.csv
-            //    {
-            //        writer.WriteLine(CharString);
-            //    }
-            //}
+                foreach (var c in Characters)
+                {
+                    writer.WriteLine($"{c.name},{c.charClass},{c.lvl},{c.hp},{c.equipment}"); // then write in all characters
+                }
+            }
         }
     }
 }
